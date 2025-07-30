@@ -7,7 +7,7 @@ const CartCard = ({item: {description, condition, name,price}}) => {
             <div>
                 <div className="flex mb-1">
                     <div className=" flex items-center">
-                        <img src="./pexels.png" //{picture}
+                        <img src="/pexels.jpg" //{picture}
                              className="w-10 h-10 sm:w-12 sm:h-12 md:w-10 md:h-10 lg:w-10 lg:h-10 object-cover rounded-full"
                              alt="profile"
                         />
@@ -21,7 +21,7 @@ const CartCard = ({item: {description, condition, name,price}}) => {
             <div className="flex flex-wrap lg:flex-nowrap justify-between">
                 <div className="flex mb-4 md:3/2 lg:w-2/3">
                     <img
-                        src="./pexels.png" //{product_image}
+                        src="./blue-low-nike.png" //{product_image}
                         className="w-40 h-30 sm:w-30 sm:h-30 md:w-32 md:h-32 lg:w-36 lg:h-36 object-cover rounded-md"
                         alt="product"
                     />

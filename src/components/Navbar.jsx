@@ -13,17 +13,20 @@ const Navbar = () => {
         <div className="shadow-sm bg-white py-1">
             <div className="my-1 py-1.5 flex justify-between">
                 <div className="flex mx-2 px-4 gap-2">
-                    <p>
+
+                    <p className="flex">
+                        <img src='/logo.png' width='40px'/>
                         <Link
                             className="text-2xl text-[#ce1750] font-black font-[Montserrat]"
                             to="/"
                         >
-                            unistore
+
+                            campus-swap
                         </Link>
                     </p>
 
                 </div>
-                <Search/>
+                <Search className="hidden"/>
 
                 <ul className="flex px-4 text-lg gap-3 font-semibold py-1 navitems">
 

@@ -20,9 +20,9 @@ const Cart = () => {
             <div className="max-w-6xl mx-auto">
                 <h3 className="mt-10 mx-6 md:mx-6 lg:mx-6 font-bold text-3xl">Bag</h3>
                 <div>
-                    {items.map(item => (
+                    {Array.isArray(items) ? items.map(item => (
                         <CartCard key={item.id} item={item}/>
-                    ))}
+                    )):[]}
                 </div>
 
             </div>

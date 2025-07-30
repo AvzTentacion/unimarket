@@ -1,7 +1,23 @@
 import { PhotoIcon, UserCircleIcon } from '@heroicons/react/24/solid'
 import { ChevronDownIcon } from '@heroicons/react/16/solid'
+import {useEffect, useState} from "react";
 
 export default function ListingForm() {
+    const token = localStorage.getItem("token");
+    const decoded = JSON.parse(atob(token.split('.')[1]));
+    const userId = decoded.sub; // or decoded["nameid"]
+    const [categories, setCategories] = useState([]);
+
+
+    useEffect(() => {
+        fetch('/api/listings/categories')
+            .then(res => res.json())
+            .then(data => setCategories(data));
+
+        fetch('/api/listings/conditions')
+            .then(res => res.json())
+            .then(data => setConditions(data));
+    }, []);
     return (
         <form>
             <div className="space-y-10 font-[Montserrat]">

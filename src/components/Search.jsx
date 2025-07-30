@@ -31,8 +31,9 @@ const Search = () => {
 
     return (
         <div>
-            <form onSubmit={handleSearch} className="ml-6">
+            <form onSubmit={handleSearch} className="ml-6 hidden md:block lg:block">
                 <input
+                    id="two"
                     type="text"
                     placeholder="Search products..."
                     value={search}
