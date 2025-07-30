@@ -35,7 +35,7 @@ const Footer = () => {
                 <div className="text-sm text-gray-700">
                     <p className="font-semibold text-gray-800 mb-2">Connect</p>
                     <div className="flex gap-4">
-                        <a href="https://www.instagram.com/campus_swap_nmu/" target="_blank" rel="noreferrer" className="hover:text-blue-500">📸 Instagram</a>
+                        <a href="https://www.instagram.com/campus_swap_nmu" target="_blank" rel="noreferrer" className="hover:text-blue-500">📸 Instagram</a>
                         <a href="mailto:support@yourapp.com" className="hover:text-blue-500">✉️ Email</a>
                     </div>
                 </div>
