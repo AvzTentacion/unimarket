@@ -39,7 +39,7 @@ const RecentListings = () => {
                 <h2 className="text-2xl font-bold text-gray-800">🆕 Recently Listed</h2>
                 <a
                     href="/shop?sort=latest"
-                    className="text-blue-600 hover:underline text-sm font-medium"
+                    className="text-[#ce1750] hover:underline text-md font-medium"
                 >
                     View All ➤
                 </a>
