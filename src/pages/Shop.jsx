@@ -3,6 +3,7 @@ import { getAllItems } from '../services/Itemapi.js';
 import {Link, useSearchParams} from "react-router-dom";
 import api from "../services/api.js";
 import Navbar from "../components/Navbar.jsx";
+import ItemCard from "../components/ItemCard.jsx";
 
 function Shop() {
     const [items, setItems] = useState([]);
@@ -78,43 +79,17 @@ function Shop() {
 
                 {/* Item Grid */}
                 {loading ? (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
                         {Array.isArray(items) && items.map((item) => (
-                            <Link
-                                to={`/product/${item.id}`}
-                                key={item.id}
-                                className="border rounded p-3 shadow hover:shadow-md transition duration-150" >
-                                <div className="h-40 overflow-hidden flex items-center justify-center mb-2">
-                                    <img
-                                        src={item.images?.length > 0 ? item.images[0].url : "/adidas-yeezy.png"}
-                                        alt={item.name}
-                                        className="w-full h-48 object-cover rounded"
-                                    />
-                                </div>
-                                <h2 className="font-semibold text-md truncate">{item.name}</h2>
-                                <p className="text-sm text-gray-600 line-clamp-2">
-                                    {item.description}
-                                </p>
-                                <p className="font-bold mt-2 text-[#ce1750]">R{item.price}</p>
-                                <p className="text-xs text-gray-500">{item.condition}</p>
-
-                            </Link>
+                            <ItemCard key={item.id} item={item}/>
                         ))}
                     </div>
                 ) : items.length === 0 ? (
                     <p>No items found.</p>
                 ) : (
-                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-6">
                         {Array.isArray(items) && items.map((item) => (
-                            <div
-                                key={item.id}
-                                className="border rounded p-3 shadow hover:shadow-md"
-                            >
-                                <h2 className="font-semibold text-lg">{item.name}</h2>
-                                <p className="text-sm text-gray-600">{item.description}</p>
-                                <p className="font-bold mt-2 text-[#ce1750]">R{item.price}</p>
-                                <p className="text-xs text-gray-500">{item.condition}</p>
-                            </div>
+                            <ItemCard key={item.id} item={item}/>
                         ))}
                     </div>
                 )}

@@ -45,6 +45,9 @@ h2 {
 }
 
 
+.input {
+  @apply w-full px-3 py-2 border rounded focus:outline-none focus:ring focus:border-blue-300;
+}
 
 @media (prefers-color-scheme: light) {
   :root {

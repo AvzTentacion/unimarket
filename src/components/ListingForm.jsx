@@ -1,187 +1,215 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
+const api = "https://localhost:7255/api"; // or your base URL
 
-const ListingForm = () => {
+function CreateListing() {
     const [form, setForm] = useState({
         name: "",
         description: "",
         price: "",
-        category: "",
         condition: "",
+        categoryId: "",
+        subCategoryId: "",
         images: [],
+        sellerId: 1, // Replace with actual user ID
     });
 
-    const [preview, setPreview] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [subCategories, setSubCategories] = useState([]);
+    const [errors, setErrors] = useState({});
+    const [success, setSuccess] = useState(false);
+
+    useEffect(() => {
+        axios.get(`${api}/categories`)
+            .then((res) => {
+                if (res.data) setCategories(res.data);
+                else setCategories([]);
+            })
+            .catch(() => setCategories([]));
+    }, []);
+
+    useEffect(() => {
+        if (!form.categoryId) return setSubCategories([]);
+        axios.get(`${api}/subcategories/by-category/${form.categoryId}`)
+            .then((res) => {
+                if (res.data) setSubCategories(res.data);
+                else setSubCategories([]);
+            })
+            .catch(() => setSubCategories([]));
+    }, [form.categoryId]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
+        setForm((prev) => ({ ...prev, [name]: value }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
     };
 
     const handleImageChange = (e) => {
-        const files = Array.from(e.target.files);
-        setForm(prev => ({ ...prev, images: files }));
+        setForm((prev) => ({ ...prev, images: Array.from(e.target.files) }));
+    };
 
-        // Generate previews
-        const previews = files.map(file => URL.createObjectURL(file));
-        setPreview(previews);
+    const validate = () => {
+        const newErrors = {};
+        if (!form.name.trim()) newErrors.name = "Name is required.";
+        if (!form.price || form.price <= 0) newErrors.price = "Enter a valid price.";
+        if (!form.condition) newErrors.condition = "Select condition.";
+        if (!form.categoryId) newErrors.categoryId = "Choose a category.";
+        if (!form.subCategoryId) newErrors.subCategoryId = "Choose a subcategory.";
+        return newErrors;
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length) {
+            setErrors(validationErrors);
+            return;
+        }
 
-        const formData = new FormData();
-        Object.entries(form).forEach(([key, value]) => {
+        const data = new FormData();
+        for (const key in form) {
             if (key === "images") {
-                value.forEach(img => formData.append("images", img));
+                form.images.forEach(file => data.append("Images", file));
             } else {
-                formData.append(key, value);
+                data.append(key, form[key]);
             }
-        });
+        }
 
         try {
-            // TODO: Replace with your POST request
-            await fetch("/api/items", {
-                method: "POST",
-                body: formData,
+            await axios.post(`${api}/items/add`, data);
+            setSuccess(true);
+            setForm({
+                name: "", description: "", price: "", condition: "",
+                categoryId: "", subCategoryId: "", images: [], sellerId: 1
             });
-            alert("Item listed successfully!");
-        } catch (err) {
-            console.error("Submit failed:", err);
-            alert("Failed to list item.");
+            setErrors({});
+        } catch {
+            setSuccess(false);
         }
     };
 
     return (
-        <form
-            onSubmit={handleSubmit}
-            className="max-w-2xl mx-auto p-6 bg-white shadow rounded space-y-4"
-            encType="multipart/form-data"
-        >
-            <h2 className="text-2xl font-bold mb-4">Create a New Listing</h2>
+        <div className="max-w-3xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-10">
+            <h2 className="text-3xl font-bold text-gray-800 mb-6">List a New Item</h2>
 
-            <div>
-                <label className="block mb-1 font-medium">Item Name</label>
-                <input
-                    type="text"
-                    name="name"
-                    value={form.name}
-                    onChange={handleChange}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-            </div>
+            {success && <p className="text-green-600 text-sm mb-4">🎉 Listing created successfully!</p>}
 
-            <div>
-                <label className="block mb-1 font-medium">Description</label>
-                <textarea
-                    name="description"
-                    value={form.description}
-                    onChange={handleChange}
-                    rows={4}
-                    className="w-full border p-2 rounded"
-                    required
-                />
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Item Name */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+                    <input
+                        type="text"
+                        name="name"
+                        value={form.name}
+                        onChange={handleChange}
+                        className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 ${errors.name ? 'border-red-500' : 'border-gray-300'} focus:ring-pink-400 transition`}
+                        placeholder="e.g. Bluetooth headphones"
+                    />
+                    {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+                </div>
 
-            <div className="flex gap-4">
-                <div className="flex-1">
-                    <label className="block mb-1 font-medium">Price (R)</label>
+                {/* Description */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                    <textarea
+                        name="description"
+                        value={form.description}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded-lg p-2 h-24 resize-none focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                        placeholder="Briefly describe the item"
+                    />
+                </div>
+
+                {/* Price */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Price (ZAR)</label>
                     <input
                         type="number"
                         name="price"
                         value={form.price}
                         onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                        required
+                        className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 ${errors.price ? 'border-red-500' : 'border-gray-300'} focus:ring-pink-400 transition`}
+                        placeholder="e.g. 450"
                     />
+                    {errors.price && <p className="text-red-500 text-sm mt-1">{errors.price}</p>}
                 </div>
 
-                <div className="flex-1">
-                    <label className="block mb-1 font-medium">Category</label>
-                    <select
-                        name="category"
-                        value={form.category}
-                        onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                        required
-                    >
-                        <option value="">Select Category</option>
-                        <option value="Books">Books</option>
-                        <option value="Clothing">Clothing</option>
-                        <option value="Electronics">Electronics</option>
-                        <option value="Stationary">Stationary</option>
-                        <option value="Appliances">Appliances</option>
-                        <option value="Sports">Sports</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-
-                <div className="flex-1">
-                    <label className="block mb-1 font-medium">Condition</label>
+                {/* Condition */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Condition</label>
                     <select
                         name="condition"
                         value={form.condition}
                         onChange={handleChange}
-                        className="w-full border p-2 rounded"
-                        required
+                        className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 ${errors.condition ? 'border-red-500' : 'border-gray-300'} focus:ring-pink-400 transition`}
                     >
-                        <option value="">Select Condition</option>
+                        <option value="">Select condition</option>
                         <option value="New">New</option>
                         <option value="Used">Used</option>
                     </select>
+                    {errors.condition && <p className="text-red-500 text-sm mt-1">{errors.condition}</p>}
                 </div>
-            </div>
 
-            <div>
-                <label className="block mb-1 font-medium">Upload Images</label>
-                <input
-                    type="file"
-                    name="images"
-                    accept="image/*"
-                    multiple
-                    onChange={handleImageChange}
-                    className="w-full border p-2 rounded"
-                />
-            </div>
-
-            {/* Image preview */}
-            {preview.length > 0 && (
-                <div className="grid grid-cols-3 gap-4 mt-2">
-                    {preview.map((src, i) => (
-                        <img
-                            key={i}
-                            src={src}
-                            alt="preview"
-                            className="w-full h-32 object-cover rounded border"
-                        />
-                    ))}
+                {/* Category */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select
+                        name="categoryId"
+                        value={form.categoryId}
+                        onChange={handleChange}
+                        className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 ${errors.categoryId ? 'border-red-500' : 'border-gray-300'} focus:ring-pink-400 transition`}
+                    >
+                        <option value="">Choose category</option>
+                        {categories.map(cat => (
+                            <option key={cat.id} value={cat.id}>{cat.name}</option>
+                        ))}
+                    </select>
+                    {errors.categoryId && <p className="text-red-500 text-sm mt-1">{errors.categoryId}</p>}
                 </div>
-            )}
 
-            <button
-                type="submit"
-                className="mt-4 bg-[#ce1750] text-white font-semibold py-2 px-4 rounded hover:bg-[#a2133f] transition"
-            >
-                Submit Listing
-            </button>
-        </form>
+                {/* Subcategory */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
+                    <select
+                        name="subCategoryId"
+                        value={form.subCategoryId}
+                        onChange={handleChange}
+                        className={`w-full border rounded-lg p-2 focus:outline-none focus:ring-2 ${errors.subCategoryId ? 'border-red-500' : 'border-gray-300'} focus:ring-pink-400 transition`}
+                    >
+                        <option value="">Choose subcategory</option>
+                        {subCategories.map(sub => (
+                            <option key={sub.id} value={sub.id}>{sub.name}</option>
+                        ))}
+                    </select>
+                    {errors.subCategoryId && <p className="text-red-500 text-sm mt-1">{errors.subCategoryId}</p>}
+                </div>
+
+                {/* Image Upload */}
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Upload Images</label>
+                    <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+                    />
+                </div>
+
+                {/* Submit Button */}
+                <button
+                    type="submit"
+                    className="w-full bg-pink-600 hover:bg-pink-700 text-white py-2 rounded-lg text-lg font-semibold transition"
+                >
+                    Post Listing
+                </button>
+            </form>
+        </div>
     );
-};
+}
 
-export default ListingForm;
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default CreateListing;
 
 
 
