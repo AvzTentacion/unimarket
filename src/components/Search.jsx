@@ -32,14 +32,27 @@ const Search = () => {
     return (
         <div>
             <form onSubmit={handleSearch} className="ml-6 hidden md:block lg:block">
-                <input
-                    id="two"
-                    type="text"
-                    placeholder="Search products..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="border border-gray-300 rounded px-3 py-1 text-sm w-60 focus:outline-none focus:ring-2 focus:ring-[#ce1750]"
-                />
+                <div className="flex border border-gray-300 rounded px-3 py-1 text-sm w-120 ">
+
+
+                    <svg  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" className="size-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"/>
+                    </svg>
+
+                    <input
+                        style={{ alignSelf: "left"}}
+                        id="two"
+                        type="text"
+                        placeholder="Search products..."
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className=" pl-2 rounded w-120  focus:outline-none focus:ring-2 focus:ring-[#ce1750] "
+
+                    />
+                </div>
+
                 {suggestions.length > 0 && (
                     <ul className="absolute bg-white shadow rounded w-full z-10">
                         {suggestions.map((item) => (
