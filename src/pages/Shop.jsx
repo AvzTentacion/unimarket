@@ -14,7 +14,10 @@ function Shop() {
 
     useEffect(() => {
         getAllItems()
-            .then(res => setItems(res.data))
+            .then(res => {
+                console.log("Initial fetch:", res.data);
+                setItems(Array.isArray(res.data.items) ? res.data.items : []);// ✅ fix here
+            })
             .catch(err => console.error('Failed to fetch items:', err));
     }, []);
 
@@ -22,19 +25,21 @@ function Shop() {
         setLoading(true);
         try {
             const res = await api.get(`/items`, {
-                params: {
-                    searchQuery,
-                    category,
-                    condition,
-                },
+                params: { searchQuery, category, condition },
             });
-            setItems(res.data);
+            console.log("Filtered fetch:", res.data);
+            setItems(Array.isArray(res.data.items) ? res.data.items : []); // ✅ fix here
         } catch (err) {
             console.error("Error fetching items:", err);
         } finally {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const urlCategory = searchParams.get("category") || "";
+        setCategory(urlCategory);
+    }, [searchParams]);
 
     useEffect(() => {
         fetchItems();
@@ -52,11 +57,13 @@ function Shop() {
                         className="border text-sm/6 p-2 rounded"
                     >
                         <option value="">Category</option>
-                        <option value="Tech">Tech</option>
                         <option value="Books">Books</option>
-                        <option value="Gadgets">Gadgets</option>
-                        <option value="Men">Men</option>
-                        <option value="Ladies">Ladies</option>
+                        <option value="Clothing">Clothing</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Stationary">Stationary</option>
+                        <option value="Appliances">Appliances</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Other">Other</option>
                     </select>
 
                     <select
@@ -72,14 +79,14 @@ function Shop() {
                 {/* Item Grid */}
                 {loading ? (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                        {items.map((item) => (
+                        {Array.isArray(items) && items.map((item) => (
                             <Link
                                 to={`/product/${item.id}`}
                                 key={item.id}
                                 className="border rounded p-3 shadow hover:shadow-md transition duration-150" >
                                 <div className="h-40 overflow-hidden flex items-center justify-center mb-2">
                                     <img
-                                        src={item.images.length > 0 ? item.images[0].url : "/adidas-yeezy.png"}
+                                        src={item.images?.length > 0 ? item.images[0].url : "/adidas-yeezy.png"}
                                         alt={item.name}
                                         className="w-full h-48 object-cover rounded"
                                     />
@@ -98,7 +105,7 @@ function Shop() {
                     <p>No items found.</p>
                 ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        {items.map((item) => (
+                        {Array.isArray(items) && items.map((item) => (
                             <div
                                 key={item.id}
                                 className="border rounded p-3 shadow hover:shadow-md"

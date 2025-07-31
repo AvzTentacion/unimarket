@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 const ItemCard = ({ item }) => {
     return (
         <Link
-            to={`/items/${item.id}`}
+            to={`/product/${item.id}`}
             className="bg-white p-4 rounded-sm shadow hover:shadow-lg transition duration-900"
         >
             <img

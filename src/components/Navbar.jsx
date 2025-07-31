@@ -58,11 +58,12 @@ const Navbar = () => {
 
             <div className="mx-2 hidden md:block lg:block">
                 <ul className="flex px-4 gap-10 catnav py-3.5">
-                    <li><Link className="font-[800]" to="/">Tech</Link></li>
-                    <li><Link className="font-[800]" to="/cart">Books</Link></li>
-                    <li><Link className="font-[800]" to="/">Gadgets</Link></li>
-                    <li><Link className="font-[800]" to="/cart">Men</Link></li>
-                    <li><Link className="font-[800]" to="/">Ladies</Link></li>
+                    <li><Link className="font-[800]" to={`/shop?category=${"Appliances"}`}>Appliances</Link></li>
+                    <li><Link className="font-[800]" to={`/shop?category=${"Books"}`}>Books</Link></li>
+                    <li><Link className="font-[800]" to={`/shop?category=${"Clothing"}`}>Clothing</Link></li>
+                    <li><Link className="font-[800]" to={`/shop?category=${"Electronics"}`}>Electronics</Link></li>
+                    <li><Link className="font-[800]" to={`/shop?category=${"Stationary"}`}>Stationary</Link></li>
+                    <li><Link className="font-[800]" to={`/shop?category=${"Sports"}`}>Sports</Link></li>
                 </ul>
             </div>
         </div>
@@ -70,28 +71,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // import React from 'react'

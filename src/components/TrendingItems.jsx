@@ -1,5 +1,7 @@
 // src/components/TrendingItems.jsx
 import ItemCard from "./ItemCard";
+import {useEffect, useState} from "react";
+import axios from "axios";
 
 const dummyTrendingItems = [
     {
@@ -32,7 +34,25 @@ const dummyTrendingItems = [
     },
 ];
 
+
 const TrendingItems = () => {
+    // const [items, setItems] = useState([]);
+    // const [loading, setLoading] = useState(false);
+
+    // useEffect(() => {
+    //     axios.get("https://localhost:7255/items/trending?count=6")
+    //         .then(res => {
+    //             setItems(res.data);
+    //             setLoading(false);
+    //         })
+    //         .catch(err => {
+    //             console.error("Failed to fetch trending items:", err);
+    //             setLoading(false);
+    //         });
+    // }, []);
+
+    // if (loading) return <p>Loading trending items...</p>;
+    // if (items.length === 0) return <p>No trending items found.</p>;
     return (
         <section className="py-10 px-6 sm:px-12 lg:px-24 font-[Montserrat] bg-white">
             <div className="flex justify-between items-center mb-6">
